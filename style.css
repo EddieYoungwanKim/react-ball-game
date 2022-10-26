@@ -1,0 +1,58 @@
+body {
+  margin: 0;
+}
+
+.container {
+  height: 100vh;
+  max-width: 480px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel {
+  height: 100px;
+  background-color: #eee;
+  padding: 20px;
+}
+.top-panel {
+  display: flex;
+  justify-content: space-between;
+}
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none; /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: 0.2s; /* 0.2 seconds transition on hover */
+  transition: opacity 0.2s;
+}
+.window {
+  height: 100%;
+  position: relative;
+  background-color: #311b92;
+}
+.ball {
+  position: absolute;
+  border-radius: 50px;
+  background-color: #ffeb3b;
+  animation-name: fallingBall;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+}
+@keyframes fallingBall {
+  0% {
+    transform: translateY(-40px);
+  }
+  100% {
+    transform: translateY(500px);
+  }
+}
