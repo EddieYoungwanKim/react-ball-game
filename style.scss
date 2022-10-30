@@ -11,13 +11,24 @@ body {
 }
 
 .panel {
-  height: 100px;
   background-color: #eee;
-  padding: 20px;
+  padding: 24px 32px;
+  z-index: 1;
 }
 .top-panel {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 24px;
+
+  align-items: center;
+}
+.points {
+  font-size: 2.2rem;
+}
+.button {
+  padding: 8px;
+  width: 125px;
+  font-size: 1.2rem;
 }
 .slidecontainer {
   width: 100%; /* Width of the outside container */
@@ -25,20 +36,20 @@ body {
 
 /* The slider itself */
 .slider {
-  -webkit-appearance: none; /* Override default CSS styles */
-  appearance: none;
-  width: 100%; /* Full-width */
-  height: 25px; /* Specified height */
-  background: #d3d3d3; /* Grey background */
-  outline: none; /* Remove outline */
-  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-  -webkit-transition: 0.2s; /* 0.2 seconds transition on hover */
-  transition: opacity 0.2s;
+  -webkit-appearance: none; /* 기본 CSS 스타일을 적용하지 않기 위해서 */
+  width: 100%; /* 슬라이더 길이 */
+  height: 5px; /* 슬라이더 두께 */
+  border-radius: 5px; /* 슬라이더 모서리를 약간 둥글게 */
+  background: #ccc; /* 슬라이더 색상 */
+  outline: none; /* 슬라이더 테두리 없이 */
 }
+
 .window {
   height: 100%;
+  max-height: 840px;
   position: relative;
   background-color: #311b92;
+  overflow: hidden;
 }
 .ball {
   position: absolute;
@@ -48,11 +59,12 @@ body {
   animation-fill-mode: forwards;
   animation-timing-function: linear;
 }
+
 @keyframes fallingBall {
   0% {
-    transform: translateY(-40px);
+    transform: translateY(0);
   }
   100% {
-    transform: translateY(500px);
+    transform: translateY(1000px);
   }
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import './style.css';
+import './style.scss';
 
-import { useState, useEffect, useRef, RefObject } from 'react';
+import { useState, useEffect, useRef, RefObject, useMemo } from 'react';
 interface Args extends IntersectionObserverInit {
   freezeOnceVisible?: boolean;
 }
@@ -68,8 +68,24 @@ function useInterval(callback: () => void, delay: number | null) {
     return () => clearInterval(id);
   }, [delay]);
 }
+const generateRandomBall = (windowWidth: string) => {
+  const minDiameter = 10;
+  const maxDiameter = 100;
+  const randomDiameter = Math.floor(
+    Math.random() * (maxDiameter - minDiameter) + minDiameter
+  );
+  const maxPosition = Number(windowWidth) - randomDiameter;
+  const randomLeftPosition = Math.floor(Math.random() * maxPosition);
+  const point = Math.floor(100 / randomDiameter);
 
-const Ball = ({ id, position, onClick, onRemove, duration, diameter }) => {
+  return {
+    id: crypto.randomUUID(),
+    leftPosition: randomLeftPosition,
+    diameter: randomDiameter,
+    point,
+  };
+};
+const Ball = ({ id, leftPosition, onClick, onRemove, duration, diameter }) => {
   const { entry, ref } = useIntersectionObserver({});
   const isVisible = entry?.isIntersecting;
 
@@ -84,39 +100,33 @@ const Ball = ({ id, position, onClick, onRemove, duration, diameter }) => {
       ref={ref}
       className="ball"
       style={{
-        top: '0px',
-        left: `${position}px`,
-        animationDuration: `${duration}s`,
+        top: `-${diameter}px`,
+        left: `${leftPosition}px`,
         width: `${diameter}px`,
         height: `${diameter}px`,
+        animationDuration: `${duration}s`,
       }}
       onMouseDown={onClick}
     />
   );
 };
 
-const generateRandomBall = () => {
-  const randomDiameter = Math.floor(Math.random() * (100 - 10) + 10);
-  // calculate width
-  const randomPosition = Math.floor(Math.random() * 350);
-
-  return {
-    id: crypto.randomUUID(),
-    position: randomPosition,
-    diameter: randomDiameter,
-  };
-};
-
 export default function App() {
   const [balls, setBalls] = useState([]);
   const [isPlaying, setPlaying] = useState<boolean>(false);
   const [points, setPoints] = useState(0);
-  const [duration, setDuration] = useState(10);
+  const [speed, setSpeed] = useState(5);
   const ref = useRef();
+  const windowHeight = ref?.current?.clientHeight;
+  const windowWidth = ref?.current?.clientWidth;
+
+  const duration = useMemo(() => {
+    return 1000 / (speed * 10);
+  }, [speed]);
 
   useInterval(
     () => {
-      setBalls((prev) => [...prev, generateRandomBall()]);
+      setBalls((prev) => [...prev, generateRandomBall(windowWidth)]);
     },
     isPlaying ? 1000 : null
   );
@@ -132,10 +142,9 @@ export default function App() {
     <div className="container">
       <div className="panel">
         <div className="top-panel">
-          <div>Number of balls: {balls.length}</div>
-          <div>Points: {points}</div>
+          <div className="points">{points}</div>
           <button
-            style={{ marginTop: '5px' }}
+            className="button"
             onClick={() => {
               setPlaying(!isPlaying);
             }}
@@ -147,27 +156,30 @@ export default function App() {
           <input
             type="range"
             min="1"
-            max="100"
-            value="50"
+            max="10"
+            value={speed}
             className="slider"
-            id="myRange"
+            onChange={(e) => {
+              setSpeed(Number(e.target.value));
+            }}
           />
+          <div>Speed</div>
         </div>
       </div>
       <div className="window" ref={ref}>
-        {balls.map(({ id, position, diameter }) => {
+        {balls.map(({ id, leftPosition, diameter, point }) => {
           return (
             <Ball
               key={id}
               id={id}
-              position={position}
+              leftPosition={leftPosition}
               diameter={diameter}
               duration={duration}
               onRemove={() => {
                 removeBall(id);
               }}
               onClick={() => {
-                setPoints(points + 1);
+                setPoints(points + point);
                 removeBall(id);
               }}
             />
